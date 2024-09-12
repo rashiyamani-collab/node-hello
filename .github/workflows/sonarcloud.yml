@@ -15,8 +15,8 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 20
-      - name: Install dependencies
-        run: yarn install
+     # - name: Install dependencies
+     #  run: yarn install
      
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@master
