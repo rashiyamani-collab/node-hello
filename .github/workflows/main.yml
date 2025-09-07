@@ -1,0 +1,54 @@
+name: Secure Deploy to S3
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  
+permissions:
+  id-token: write # Required for OIDC
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build React app
+        run: npm run build
+
+      - name: Configure AWS credentials with OIDC
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: arn:aws:iam::074002960123:role/dev-rashiyas3cloudfront-github-actions-role # Replace with your IAM Role ARN
+          aws-region: eu-west-1
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: react-build
+          path: .   # or dist/ if your project outputs there
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: react-build       # must match upload name
+          path: ./   
+
+      - name: Show file name
+        run: ls -lh
+      - name: Deploy to S3 bucket
+        run: aws s3 sync dist/ s3://dev-rashiyamani  --delete
