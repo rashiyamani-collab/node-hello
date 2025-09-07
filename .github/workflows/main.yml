@@ -18,16 +18,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20' # Specify your Node.js version
+          node-version: "20"
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build Node.js application
-        run: npm run build # Or your specific build command
+      - name: Run app (build step not required)
+        run: npm run build
         
       - name: Configure AWS credentials with OIDC
         uses: aws-actions/configure-aws-credentials@v3
